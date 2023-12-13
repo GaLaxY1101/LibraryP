@@ -116,6 +116,98 @@ namespace BookManager.Tests
             Assert.Equal(expectedFavoritesList, actualFavoritesList);
         }
 
+        [Fact]
+        public void RemoveFromFavorites_RemoveBookWhichIsNotInFavoritesList_ThrowArgumentException()
+        {
+            //Arrange
+            var sut = new BookManagerProject.BookManager();
+
+            //Act & Assert
+            Assert.Throws<ArgumentException>(() => sut.RemoveFromFavorites("1984"));
+
+        }
+
+        [Fact]
+        public void RemoveFromFavorites_RemoveBookWhichIsInFavoritesList_SuccessRemove()
+        {
+            //Arrange
+            var sut = new BookManagerProject.BookManager();
+
+            var book = new Book("The Hobbit", "J.R.R. Tolkien", "Fantasy");
+            var book2 = new Book("Harry Potter", "Joahn Rowling", "Fantasy");
+
+            sut.AddBook(book);
+            sut.AddBook(book2);
+
+            sut.AddToFavorites(book.Title);
+            sut.AddToFavorites(book2.Title);
+
+            //Act  
+            sut.RemoveFromFavorites(book2.Title);
+
+            //Assert 
+            Assert.DoesNotContain(book2, sut.GetFavorites());
+            Assert.Single(sut.GetFavorites());
+
+        }
+
+        [Fact]
+        public void GetSortedFavorites_NormalScenarioWith3Books_ReturnSortedByTitleListOfBooks()
+        {
+            //Arrange
+            var sut = new BookManagerProject.BookManager();
+
+            var book = new Book("BB The Hobbit", "J.R.R. Tolkien", "Fantasy");
+            var book2 = new Book("GG Harry Potter", "Joahn Rowling", "Fantasy");
+            var book3 = new Book("AA The Lord of the Rings", "J.R.R. Tolkien", "Fantasy");
+
+
+            sut.AddBook(book);
+            sut.AddBook(book2);
+            sut.AddBook(book3);
+
+            sut.AddToFavorites(book.Title);
+            sut.AddToFavorites(book2.Title);
+            sut.AddToFavorites(book3.Title);
+
+            var expected = new List<Book>() { book2, book, book3 };
+
+            //Act
+
+            var actual = sut.GetSortedFavorites();
+
+            //Arrange
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void GetBooksByGenre_GetBooksWithFantasyGenreOrderByTitleInDescendingOrder()
+        {
+            //Arrange
+            var sut = new BookManagerProject.BookManager();
+
+            var book = new Book("BB The Hobbit", "J.R.R. Tolkien", "Fantasy");
+            var book2 = new Book("GG Harry Potter", "Joahn Rowling", "Fantasy");
+            var book3 = new Book("AA The Lord of the Rings", "J.R.R. Tolkien", "Fantasy");
+            var book4 = new Book("History Year by Year", "Dorling Kindersley", "Popular science");
+
+
+            sut.AddBook(book);
+            sut.AddBook(book2);
+            sut.AddBook(book3);
+            sut.AddBook(book4);
+
+            var expected = new List<Book>() { book2, book, book3 };
+
+            //Act
+
+            var actual = sut.GetBooksByGenre("Fantasy");
+
+            //Arrange
+
+            Assert.Equal(expected, actual);
+        }
+
 
 
     }
