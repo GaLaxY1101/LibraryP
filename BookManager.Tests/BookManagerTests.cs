@@ -53,7 +53,71 @@ namespace BookManager.Tests
 
         }
 
+        [Fact]
+        public void RemoveBook_RemoveBookByTitle_BookWasRemovedFromBooksList()
+        {
+            //Arrange
+            var sut = new BookManagerProject.BookManager();
+
+            var book = new Book("The Hobbit", "J.R.R. Tolkien", "Fantasy");
+            var book2 = new Book("Harry Potter", "Joahn Rowling", "Fantasy");
+
+            //Act
+
+            sut.AddBook(book);
+            sut.AddBook(book2);
+
+            sut.RemoveBook("The Hobbit");
+
+            //Assert
+            Assert.DoesNotContain(book, sut.GetBooks());
+
+        }
+
+        [Fact]
+        public void AddToFavorites_AddBookWhichNotInBooksList_ThrowArgumentException()
+        {
+            //Arrange 
+            var sut = new BookManagerProject.BookManager();
+
+            var book = new Book("The Hobbit", "J.R.R. Tolkien", "Fantasy");
+            var book2 = new Book("Harry Potter", "Joahn Rowling", "Fantasy");
+
+            //Act 
+            sut.AddBook(book);
+            sut.AddBook(book2);
+
+            //Assert
+            Assert.Throws<ArgumentException>(() => sut.AddToFavorites("1984"));
+
+        }
+
+        [Fact]
+        public void AddToFavorites_AddBookToFavorites_AddedSuccessfully()
+        {
+            //Arrange 
+            var sut = new BookManagerProject.BookManager();
+
+            var book = new Book("The Hobbit", "J.R.R. Tolkien", "Fantasy");
+            var book2 = new Book("Harry Potter", "Joahn Rowling", "Fantasy");
+
+            List<Book> expectedFavoritesList = new List<Book>() { book, book2 };
+
+            //Act 
+            sut.AddBook(book);
+            sut.AddBook(book2);
+
+            sut.AddToFavorites(book.Title);
+            sut.AddToFavorites(book2.Title);
+
+            var actualFavoritesList = sut.GetFavorites();
+
+            //Assert
+            Assert.Equal(expectedFavoritesList, actualFavoritesList);
+        }
+
+
 
     }
-    
+
 }
